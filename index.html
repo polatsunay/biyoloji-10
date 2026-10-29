@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>Enerji ve Fotosentez Atölyesi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: yapraktan esinli çalışma defteri — üstte sekmeli bölüm çubuğu, tek sütun kartlar, sağda ilerleme */
+:root{
+  --bg:#f3f6f0; --paper:#ffffff; --ink:#18241a; --muted:#5b6b5d; --line:#d7e0d3;
+  --leaf:#1f7a45; --leaf-soft:#e2f1e6; --atp:#c27a0e; --atp-soft:#fbefd9;
+  --ok:#1f7a45; --bad:#b4372b; --bad-soft:#fbe5e2;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101612; --paper:#18211b; --ink:#e6eee6; --muted:#9db0a0; --line:#2b3a2f;
+  --leaf:#5fcf8b; --leaf-soft:#1c3324; --atp:#f0ac3c; --atp-soft:#33280f;
+  --ok:#5fcf8b; --bad:#f08376; --bad-soft:#3a1f1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101612; --paper:#18211b; --ink:#e6eee6; --muted:#9db0a0; --line:#2b3a2f;
+  --leaf:#5fcf8b; --leaf-soft:#1c3324; --atp:#f0ac3c; --atp-soft:#33280f;
+  --ok:#5fcf8b; --bad:#f08376; --bad-soft:#3a1f1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:880px;margin:0 auto;padding-block:20px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.hero{display:grid;gap:10px;padding-block:18px 8px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--leaf)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0;text-wrap:balance}
+h1 em{font-style:normal;color:var(--atp)}
+.lead{color:var(--muted);max-width:62ch;margin:0}
+.progress{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:8px}
+.bar{flex:1 1 220px;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--leaf),var(--atp));transition:width .4s}
+.pnum{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding-block:12px;margin-top:10px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.tabs button{flex:0 0 auto;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:600 14px var(--f-body);padding:8px 14px;border-radius:99px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--leaf);border-color:var(--leaf);color:var(--paper)}
+nav.tabs small{font-family:var(--f-mono);opacity:.75;margin-left:4px}
+section.panel{display:grid;gap:16px;padding-top:20px}
+.intro{display:grid;gap:8px;padding:16px 18px;border-radius:14px;background:var(--leaf-soft)}
+.intro h2{font-family:var(--f-display);font-size:24px;margin:0;line-height:1.15}
+.intro p{margin:0;max-width:68ch}
+.intro ul{margin:0;padding-left:20px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--paper);color:var(--ink);font:14px var(--f-body);padding:6px 12px;border-radius:99px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--atp);background:var(--atp-soft)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;gap:10px;min-width:0}
+.card.known{border-left:5px solid var(--ok)}
+.card.again{border-left:5px solid var(--atp)}
+.qhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.qnum{font-family:var(--f-display);font-weight:700;font-size:19px}
+.tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ctx{margin:0;color:var(--muted)}
+.ctx b{color:var(--ink);font-weight:700}
+.q{margin:0;font-weight:700}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button.act{font:700 14px var(--f-body);border-radius:10px;padding:8px 14px;cursor:pointer;border:1px solid var(--leaf);background:transparent;color:var(--leaf)}
+button.act.primary{background:var(--leaf);color:var(--paper)}
+button.act.amber{border-color:var(--atp);color:var(--atp)}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--atp);outline-offset:2px}
+.ans{border-radius:10px;background:var(--leaf-soft);padding:12px 14px;margin:0}
+.ans::before{content:"Cevap";display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--leaf);margin-bottom:4px}
+.f{font-family:var(--f-mono);font-size:.92em;white-space:nowrap}
+textarea{width:100%;min-height:70px;font:15px var(--f-body);padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical}
+.opts{display:grid;gap:6px}
+.opt{text-align:left;font:15px var(--f-body);padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opt.right{border-color:var(--ok);background:var(--leaf-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.fb{margin:0;font-weight:700}
+.fb.ok{color:var(--ok)} .fb.no{color:var(--bad)}
+.svgbox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.svgbox svg{display:block;width:100%;min-width:420px;height:auto}
+svg text{font-family:var(--f-body);fill:var(--ink)}
+svg .slot{cursor:pointer}
+svg .slot rect{fill:var(--paper);stroke:var(--line)}
+svg .slot.hit rect{fill:var(--bad-soft);stroke:var(--bad);stroke-width:2}
+svg .slot.miss rect{fill:var(--paper);stroke:var(--bad);stroke-dasharray:3 2;stroke-width:2}
+svg .slot.good rect{fill:var(--leaf-soft);stroke:var(--ok);stroke-width:2}
+svg .wire{stroke:var(--muted);fill:none;stroke-width:1.4}
+svg .head{fill:var(--muted)}
+.modeltabs{display:flex;gap:6px;flex-wrap:wrap}
+.score{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.grid2 label{display:grid;gap:4px;font-size:14px;color:var(--muted)}
+select,input[type=text]{font:15px var(--f-body);padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+select.good{border-color:var(--ok);background:var(--leaf-soft)} select.bad{border-color:var(--bad);background:var(--bad-soft)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--leaf-soft);font-family:var(--f-display);font-weight:700}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:center}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:16px;align-items:center}
+@media (max-width:620px){.lab{grid-template-columns:1fr}}
+.tank{position:relative;height:220px;border-radius:12px;background:linear-gradient(var(--bg),var(--leaf-soft));border:1px solid var(--line);overflow:hidden}
+.tank.dark{background:#0b0f0c}
+.lamp{position:absolute;left:50%;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:#8a4bd6;box-shadow:0 0 30px 12px rgba(138,75,214,.45);transition:top .4s}
+.tube{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);width:34px;height:120px;border:2px solid var(--muted);border-bottom:none;border-radius:16px 16px 0 0}
+.plant{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);font-family:var(--f-mono);font-size:11px;color:var(--leaf)}
+.bub{position:absolute;bottom:40px;width:6px;height:6px;border-radius:50%;border:1.5px solid var(--leaf);animation:rise 1.8s linear forwards}
+@keyframes rise{to{transform:translateY(-110px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bub{animation-duration:.01s}.bar i{transition:none}}
+.counter{font-family:var(--f-display);font-size:44px;font-weight:800;color:var(--leaf);font-variant-numeric:tabular-nums;line-height:1}
+.petris{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.petri{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;justify-items:center;text-align:center;font-size:14px}
+.dish{width:120px;height:120px;border-radius:50%;border:2px solid var(--muted);position:relative;background:var(--bg)}
+.cell{position:absolute;width:12px;height:12px;border-radius:50%;background:var(--atp);opacity:.85;transition:all .6s}
+.rubric{display:grid;gap:6px}
+.rubric label{display:flex;gap:8px;align-items:flex-start;font-size:14.5px}
+.match{display:grid;gap:8px}
+.match .row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:center}
+.foot{color:var(--muted);font-size:13px;text-align:center;padding-top:24px}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">10. Sınıf Biyoloji · 1. Dönem 1. Yazılı</span>
+    <h1>Enerji, <em>ATP</em> ve Fotosentez Atölyesi</h1>
+    <p class="lead">Soru bankasının 60 bağlam temelli sorusu, yazılı provasının 4 sorusu ve hücre bölünmesi materyallerinin 15 sorusu burada. Önce cevabını düşün ya da yaz, sonra aç ve kendini işaretle.</p>
+    <div class="progress"><div class="bar"><i id="pbar"></i></div><span class="pnum" id="ptext">0 / 79 soru bilindi</span>
+      <button class="chip" id="reset" type="button">İlerlemeyi sıfırla</button></div>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="main"></main>
+  <p class="foot">Kaynak: T.C. MEB 10. Sınıf Biyoloji Ders Kitabı esaslı soru bankası, Yazılıya Hazırlanıyorum (OGM) ve OGM Materyal föyleri.</p>
+</div>
+
+<script>
+const S = s => s.replace(/CO2/g,'CO<sub>2</sub>').replace(/H2O/g,'H<sub>2</sub>O').replace(/H2S/g,'H<sub>2</sub>S').replace(/(^|[^A-Z])O2/g,'$1O<sub>2</sub>').replace(/C6H12O6/g,'C<sub>6</sub>H<sub>12</sub>O<sub>6</sub>').replace(/NADP\+/g,'NADP<sup>+</sup>').replace(/H2(?![O S])/g,'H<sub>2</sub>');
+
+const BANK = [
+// ---- Ünite 1.1
+{n:1,u:1,b:"Kış uykusuna yatan dağ sıçanının vücut sıcaklığı ve metabolizma hızı belirgin şekilde düşer. Yeterli besin bulunmayan bu süreçte canlı, önceden depoladığı yağı yakarak yaşamını sürdürür.",s:"Depolanan nötral yağların hücresel solunumla parçalanması sonucu açığa çıkan ATP ve metabolik suyun kış uykusundaki canlıya sağladığı avantajları açıklayınız.",c:"Yağlar yapısındaki yüksek hidrojen oranı nedeniyle yıkıldığında bol miktarda ATP ve metabolik su verir. ATP hayati faaliyetlerin ve vücut ısısının sürmesini sağlar; metabolik su, besin ve su alamayan canlının su dengesini korur."},
+{n:2,u:1,b:"Koşan bir çocuğun, yuvasına tohum taşıyan bir karıncanın ve miyavlayan bir kedinin gerçekleştirdiği biyolojik olayların tamamında enerji harcanır.",s:"Canlılarda gerçekleşen bu hareket ve uyarı iletimi gibi yaşamsal faaliyetlerde kullanılan ortak enerji molekülünü ve genel özelliklerini yazınız.",c:"Ortak enerji molekülü ATP (Adenozin Trifosfat)'dir. ATP depolanamaz, hücre zarından geçemez, hücreler arası aktarılamaz; her hücre ihtiyaç duyduğu ATP'yi kendisi anlık olarak üretip tüketir."},
+{n:3,u:1,b:"Fotosentez yapan bir bitki güneş ışığını yakalayarak organik besin sentezler. Bu besinler otçul hayvanlar ve ardından etçiller tarafından tüketilir.",s:"Güneş enerjisinden başlayarak canlılardaki ATP molekülüne uzanan enerji dönüşüm zincirinin basamaklarını açıklayınız.",c:"Güneş enerjisi fotosentezle organik besinlerdeki kimyasal bağ enerjisine dönüşür. Bu enerji besin zinciriyle tüketicilere aktarılır. Hücresel solunumla besinlerdeki bağ enerjisi ATP'ye aktarılır ve metabolik faaliyetlerde kullanılır."},
+{n:4,u:1,b:"Bir araştırmacı, karaciğer hücresinde üretilen ATP'nin komşu alyuvar hücresine geçerek orada kullanılıp kullanılamadığını test etmek amacıyla deney düzeneği hazırlar.",s:"Hücrelerin ürettikleri ATP'yi komşu hücrelere devredememesinin biyolojik gerekçesini hücre zarının yapısı açısından açıklayınız.",c:"ATP büyük ve yüklü bir nükleotit molekülüdür. Hücre zarından pasif veya aktif taşımayla geçemez. Bu nedenle her hücre kendi ATP'sini kendisi sentezlemek zorundadır."},
+{n:5,u:1,b:"Canlı hücreler glikoz, glikojen ve yağ gibi molekülleri depolar. Ancak yaşamsal faaliyetlerin doğrudan enerji kaynağı olan ATP molekülünü hücre içinde yedek olarak depolayamazlar.",s:"ATP'nin hücrede depolanamamasının nedenini ve ATP döngüsünün kesintisiz sürmesinin önemini belirtiniz.",c:"ATP yapısındaki yüksek enerjili fosfat bağları kararsızdır ve kolayca kopar; kararsız yapısı nedeniyle depolanamaz, anlık üretilip tüketilir. ATP döngüsü kesintiye uğrarsa yaşamsal faaliyetler, dolayısıyla canlılık sona erer."},
+{n:6,u:1,b:"Nükleotit yapıda olan ATP molekülü azotlu bir organik baz, 5 karbonlu bir şeker ve fosfat gruplarından oluşur.",s:"Adenin bazı ile riboz şekerinin birleşmesiyle oluşan molekülün adını ve aralarındaki kimyasal bağ türünü yazınız.",c:"Adenin bazı ile riboz şekerinin birleşmesiyle Adenozin molekülü oluşur. Aralarındaki kimyasal bağ glikozit bağıdır."},
+{n:7,u:1,b:"RNA molekülünün yapısında bulunan adenin nükleotidi ile ATP molekülünün yapısı büyük oranda benzerlik gösterir.",s:"ATP molekülünü RNA'daki adenin nükleotidinden ayıran temel yapısal farkı fosfat grupları açısından açıklayınız.",c:"RNA adenin nükleotidinde riboz şekerine bağlı 1 fosfat grubu bulunurken ATP molekülünde riboz şekerine bağlı 3 fosfat grubu bulunur."},
+{n:8,u:1,b:"Adenozin molekülüne sırasıyla fosfat gruplarının eklenmesiyle farklı fosfatlı nükleotit bileşikleri meydana gelir.",s:"Adenozin molekülüne 1, 2 ve 3 fosfat bağlanmasıyla oluşan moleküllerin açık isimlerini ve kısaltmalarını yazınız.",c:"1 fosfatla Adenozin Monofosfat (AMP), 2 fosfatla Adenozin Difosfat (ADP), 3 fosfatla Adenozin Trifosfat (ATP) oluşur."},
+{n:9,u:1,b:"Hücrede ADP molekülüne bir inorganik fosfat (Pi) ve enerji eklenmesiyle ATP ve su sentezlenir.",s:"ADP + Pi + Enerji → ATP + H2O tepkimesinin adını ve bu sürecin bir dehidrasyon tepkimesi olma özelliğini açıklayınız.",c:"Bu tepkimeye fosforilasyon denir. Küçük moleküller birleşirken bağ kurulması sırasında su açığa çıktığı için bir dehidrasyon sentezidir."},
+{n:10,u:1,b:"ATP molekülünün su ile hidroliz edilmesi sonucunda fosfat bağı kopar ve ADP, inorganik fosfat ile serbest enerji açığa çıkar.",s:"ATP + H2O → ADP + Pi + Serbest Enerji tepkimesinin adını ve bu tepkimenin hücredeki amacını yazınız.",c:"Bu tepkimeye defosforilasyon (ATP hidrolizi) denir. Açığa çıkan serbest enerji hücredeki endergonik (enerji isteyen) yaşamsal faaliyetlerde kullanılır."},
+{n:11,u:1,b:"Hücrede gerçekleşen metabolik reaksiyonlar enerji değişimi yönüyle ekzergonik ve endergonik olarak sınıflandırılır.",s:"Ekzergonik tepkime kavramını tanımlayarak hücresel solunumun neden bu grupta yer aldığını gerekçelendiriniz.",c:"Gerçekleşirken dışarıya serbest enerji veren tepkimelere ekzergonik denir. Hücresel solunumda organik besinler yıkılarak ortama serbest enerji verildiği için ekzergoniktir."},
+{n:12,u:1,b:"Hücre zarından madde taşınması, protein sentezi ve kas hareketleri dışarıdan enerji girdisi olmadan gerçekleşemez.",s:"Endergonik tepkime kavramını tanımlayarak bu yapım ve hareket olaylarının neden endergonik olduğunu açıklayınız.",c:"Gerçekleşmesi için dışarıdan enerjiye ihtiyaç duyan tepkimelere endergonik denir. Biyosentez, aktif taşıma ve kas kasılmasında ATP harcandığı için endergoniktir."},
+{n:13,u:1,b:"Metabolik olaylarda enerjiyi açığa çıkaran ekzergonik tepkimeler ile enerjiyi kullanan endergonik tepkimeler birlikte yürütülür.",s:"Hücredeki ATP döngüsünün ekzergonik ve endergonik tepkimeler arasında nasıl bir köprü kurduğunu açıklayınız.",c:"Ekzergonik tepkimelerden (solunum) açığa çıkan enerjiyle ADP'ye fosfat eklenerek ATP sentezlenir. Sentezlenen ATP hidroliz edilerek serbest kalan enerji endergonik tepkimelere aktarılır."},
+{n:14,u:1,b:"Ağır bir egzersize başlayan bir atletin bacak kas hücrelerinde ATP yıkım hızı aniden artar.",s:"Defosforilasyonun hızlanmasına bağlı olarak kas hücresindeki anlık ATP, ADP ve inorganik fosfat (Pi) miktarlarındaki değişimi yorumlayınız.",c:"ATP hidrolizi hızlandığı için hücre içi ATP miktarı anlık düşer; ADP ve inorganik fosfat (Pi) miktarı artar. Solunum hızlanarak ADP'lerden tekrar ATP üretilir."},
+{n:15,u:1,b:"ATP hidrolizi sırasında açığa çıkan serbest enerjinin bir kısmı hücresel işte kullanılırken bir kısmı ısı olarak çevreye yayılır.",s:"Defosforilasyondaki bu enerji kaybının sabit sıcaklıklı canlılarda vücut ısısının korunmasına katkısını açıklayınız.",c:"ATP hidrolizinde serbest kalan enerjinin bir kısmı ısı enerjisine dönüşür. Bu ısı vücut sıcaklığının dengede tutulmasında ve soğukta vücut ısısının korunmasında rol oynar."},
+{n:16,u:1,b:"Bir sinir hücresinde impuls iletimi sırasında sodyum ve potasyum iyonları hücre zarından az yoğun oldukları taraftan çok yoğun tarafa pompalanır.",s:"Bu aktif taşıma sürecinde harcanan enerjinin kaynağını ve hangi reaksiyonla sağlandığını yazınız.",c:"Harcanan enerji ATP molekülüdür. Bu enerji ATP'nin su ile hidroliz edildiği defosforilasyon reaksiyonuyla açığa çıkan serbest enerjiden sağlanır."},
+{n:17,u:1,b:"Yaralanan bir dokunun onarılması sırasında hücre bölünmesi ve yoğun protein sentezi gerçekleşir.",s:"Doku onarımının neden endergonik nitelikte olduğunu ve ihtiyaç duyulan ATP'nin nasıl karşılandığını açıklayınız.",c:"Protein sentezi ve hücre bölünmesi yapım tepkimeleridir ve dışarıdan enerji ister (endergonik). İhtiyaç duyulan ATP hücredeki ekzergonik solunum tepkimeleriyle karşılanır."},
+{n:18,u:1,b:"Gelişen teknolojiyle elektrikli araç bataryalarında elektrik depolarken canlı hücreler enerjiyi farklı bir formda tutar.",s:"Elektrikli araç bataryası ile canlı hücredeki ATP molekülünün enerji tutma biçimleri arasındaki temel farkı açıklayınız.",c:"Araç bataryaları elektrik enerjisini depolarken ATP enerjiyi kimyasal bağ enerjisi şeklinde fosfat grupları arasındaki bağlarda anlık olarak tutar; depolanmaz."},
+{n:19,u:1,b:"Soğuk havada kalan bir insanın istemsizce titremesi kasların mikro düzeyde hızla kasılıp gevşemesi olayıdır.",s:"Titreme davranışının ATP döngüsü ve vücut ısısı üretimi açısından biyolojik amacını gerekçelendiriniz.",c:"Kas kasılmasında ATP harcanır (defosforilasyon). Artan ATP ihtiyacını karşılamak için solunum hızlanır; bu sırada açığa çıkan ısı enerjisi vücut sıcaklığını yükseltir."},
+{n:20,u:1,b:"Bir bitki hücresinin kloroplast organelinde fotosentez sırasında ışık enerjisiyle ATP sentezlenir.",s:"Kloroplastta sentezlenen bu ATP'nin kullanım yeri ile mitokondride sentezlenen ATP'nin kullanım alanı arasındaki farkı yazınız.",c:"Kloroplastta sentezlenen ATP yalnızca fotosentezin Calvin döngüsünde organik madde sentezinde kullanılır. Mitokondride üretilen ATP ise hücrenin tüm yaşamsal faaliyetlerinde kullanılır."},
+// ---- Ünite 1.2
+{n:21,u:2,b:"Mor kükürt bakterisi, siyanobakteri, öglena ve bir elodea bitkisi farklı âlemlerde yer almalarına rağmen besin sentezleme yöntemleri yönüyle ortak bir grupta toplanır.",s:"Bu canlıların tamamının fototrof olarak adlandırılmasının temel nedenini kullandıkları enerji kaynağı bağlamında açıklayınız.",c:"Bu canlılar klorofil pigmentleri ve organik besin sentezi için gerekli enerjiyi doğrudan güneş ışığından sağladıkları için fototrof olarak adlandırılır."},
+{n:22,u:2,b:"Bir ormanda meşe ağacının gövdesinde yaşayan ciksacı gibi tam parazit bitkiler kloroplast ve klorofil taşımamaktadır.",s:"Tam parazit bitkilerin neden fototrof kabul edilmediğini ve organik besin ihtiyaçlarını nasıl karşıladıklarını açıklayınız.",c:"Klorofil taşımadıkları için ışık enerjisiyle besin sentezleyemezler (fotosentez yapamazlar). İhtiyaç duydukları organik besin ve suyu üzerinde yaşadıkları konak bitkinin iletim demetlerinden alırlar."},
+{n:23,u:2,b:"Okyanuslarda ve göllerde yaşayan mikroskobik algler ve siyanobakteriler sucul ekosistemlerin temelini oluşturur.",s:"Sucul fotosentetik organizmaların su ekosistemlerindeki besin zinciri ve enerji akışı açısından önemini değerlendiriniz.",c:"Sucul fotosentetik organizmalar güneş ışığını kullanarak organik madde üreten birincil üreticilerdir. Su ekosistemlerindeki besin zincirinin ve enerji akışının başlangıç halkasını oluştururlar; ayrıca O2 üretirler."},
+{n:24,u:2,b:"Güneşten gelen elektromanyetik spektrum içerisinde X ışınlarından radyo dalgalarına kadar geniş bir dalga boyu aralığı bulunur. Fotosentez ise sadece 380–750 nm aralığında gerçekleşir.",s:"380–750 nm dalga boyu aralığının adını ve fotosentezdeki hayati işlevini açıklayınız.",c:"Bu aralık görünür ışıktır; insan gözünün renkli algıladığı bölgedir. Klorofil pigmenti tarafından soğurularak fotosentezde kullanılan ana enerji kaynağını oluşturur."},
+{n:25,u:2,b:"Fiziksel kurallara göre ışığın dalga boyu ile taşıdığı enerji miktarı arasında ters orantı bulunmaktadır.",s:"Görünür ışık spektrumundaki mor ışık ile kırmızı ışığın dalga boylarını ve taşıdıkları enerji miktarlarını karşılaştırınız.",c:"Mor ışık en kısa dalga boyuna (yaklaşık 380 nm) sahip olup en yüksek enerjiyi taşır. Kırmızı ışık en uzun dalga boyuna (yaklaşık 750 nm) sahip olup daha az enerji taşır."},
+{n:26,u:2,b:"Işık bir cisme çarptığında geçirilme, soğurulma (absorbsiyon) veya yansıtılma olayları gerçekleşir.",s:"Bir bitki yaprağının gözümüze yeşil renkte görünmesinin nedenini ışık ile pigment etkileşimi açısından açıklayınız.",c:"Yapraktaki klorofil pigmenti mor, mavi ve kırmızı ışığı büyük oranda soğururken yeşil ışığı soğurmaz; yansıtır veya geçirir. Yansıyan yeşil ışık gözümüze ulaştığı için yaprak yeşil görünür."},
+{n:27,u:2,b:"Fotosentezin gerçekleşebilmesi için görünür ışığın hücresel düzeyde özel moleküller tarafından tutulması gerekir.",s:"Görünür ışığı soğuran temel fotosentetik pigmentin adını ve soğurulan bu ışık enerjisinin neye dönüştürüldüğünü yazınız.",c:"Temel pigment klorofildir. Klorofilin soğurduğu ışık enerjisi, fotosentez tepkimelerinde organik besin sentezinde kullanılmak üzere kimyasal bağ enerjisine (önce ATP ve NADPH'a) dönüştürülür."},
+{n:28,u:2,b:"Bitki yapraklarında klorofilin yanı sıra ksantofil (sarı), karoten (turuncu) ve likopen (kırmızı) gibi yardımcı pigmentler bulunur.",s:"Yardımcı pigmentlerin (karotenoidler) fotosentez sürecine sunduğu iki temel katkıyı açıklayınız.",c:"1. Klorofilin soğuramadığı farklı dalga boyundaki ışıkları soğurarak klorofile aktarırlar. 2. Fazla ve yüksek enerjili ışığı soğurarak klorofil molekülünün zarar görmesini engellerler."},
+{n:29,u:2,b:"Ökaryot bir bitki hücresinde fotosentezin ışığa bağımlı tepkimeleri kloroplastın granumlarında gerçekleşirken fotosentetik bir bakteride sitoplazmik zar katlanmalarında gerçekleşir.",s:"Ökaryot ve prokaryot hücrelerde ışığa bağımlı tepkimelerin gerçekleştiği yapıların işlevsel ortaklığını yorumlayınız.",c:"Her iki yapıda da klorofil pigmentleri ve Elektron Taşıma Sistemi (ETS) elemanları zar üzerinde konumlanmıştır. Amaç ışık enerjisiyle elektronları aktarıp ATP sentezlemektir."},
+{n:30,u:2,b:"Işığa bağımlı tepkimelerde ışık enerjisinin etkisiyle su molekülleri fotoliz reaksiyonuna uğrayarak H2O → 2e⁻ + 2H⁺ + ½ O2 şeklinde parçalanır.",s:"Fotoliz sonucu açığa çıkan elektron (e⁻), hidrojen (H⁺) ve oksijenin (O2) hücresel kullanım amaçlarını yazınız.",c:"Elektronlar klorofilin elektron açığını kapatır. Hidrojenler NADP+ tarafından tutularak NADPH oluşur. Oksijen (O2) yan ürün olarak atmosfere verilir veya hücresel solunumda kullanılır."},
+{n:31,u:2,b:"Fotosentez sırasında NADP+ molekülü elektron ve proton alarak NADPH yapısına dönüşür.",s:"Işıklı evrede oluşan NADPH molekülünün fotosentezin ışığın kullanılmadığı evresindeki (Calvin döngüsü) işlevini açıklayınız.",c:"NADPH ışıklı evrede tuttuğu yüksek enerjili elektronları ve hidrojenleri Calvin döngüsüne taşıyarak CO2'nin indirgenmesini ve PGAL (organik besin) sentezlenmesini sağlar."},
+{n:32,u:2,b:"Fotosentezin ışığın kullanılmadığı tepkimeleri (Calvin döngüsü) ökaryotlarda kloroplastın stromasında gerçekleşir.",s:"Calvin döngüsünde tüketilen temel inorganik maddeyi ve bu evre sonucunda sentezlenen temel 3 karbonlu organik ara ürünü yazınız.",c:"Tüketilen temel inorganik madde karbondioksittir (CO2). Sentezlenen temel 3 karbonlu organik ara ürün ise fosfogliseraldehittir (PGAL)."},
+{n:33,u:2,b:"Fotosentezin ışığın kullanılmadığı evresinde klorofil ve ETS elemanları doğrudan görev almaz.",s:"Bu evreye 'ışığın kullanılmadığı tepkimeler' denmesine rağmen ortamda ışığın bulunması gerekliliğini gerekçelendiriniz.",c:"İlk doğrudan enzimsel tepkimeleri uyarmasa da bu evrede ihtiyaç duyulan ATP ve NADPH molekülleri sadece ışıklı evrede üretilir. Bu nedenle ışığa dolaylı olarak bağlıdır."},
+{n:34,u:2,b:"Sıcaklığın 35 °C'un üzerine çıkarıldığı bir serada bitkilerin fotosentez hızının aniden düştüğü ve durduğu gözlenir.",s:"Yüksek sıcaklığın özellikle Calvin döngüsündeki fotosentez hızını olumsuz etkilemesinin biyokimyasal nedenini açıklayınız.",c:"Calvin döngüsü tepkimeleri çok sayıda enzimin kontrolünde gerçekleşir. Yüksek sıcaklık bu enzimlerin protein yapısını (üç boyutlu yapısını) denatüre ederek çalışamaz hâle getirir."},
+{n:35,u:2,b:"Kloroplastın stromasında sentezlenen PGAL (fosfogliseraldehit) molekülü bitki metabolizmasının kavşak noktasıdır.",s:"PGAL molekülünden bitki hücresinde sentezlenebilen farklı organik besin çeşitlerine 4 örnek veriniz.",c:"Glikoz, sükroz, nişasta, yağ asidi, gliserol, amino asit ve vitaminler PGAL dönüşümüyle sentezlenebilir."},
+{n:36,u:2,b:"PGAL molekülünden amino asit, azotlu organik baz veya vitamin sentezlenirken ortama ek elementin katılması gerekir.",s:"Bitkilerin bu organik molekülleri sentezleyebilmek için topraktan almak zorunda oldukları inorganik madde grubunu yazınız.",c:"Topraktan suda çözünmüş azot tuzları (nitrat/amonyum) ve mineraller alınır."},
+{n:37,u:2,b:"Bir bitkinin fotosentez hızı ışık şiddeti, CO2 miktarı, sıcaklık ve mineral miktarı gibi birçok faktörden etkilenir.",s:"Fotosentez hızını miktarı en az olan faktörün belirlediğini ifade eden kuralın adını ve mantığını açıklayınız.",c:"Bu kural Minimum Kuralı'dır. Fotosentez hızı, çevre koşulları içerisinde ideal değerden en uzak ve miktarı en yetersiz olan tek bir faktöre göre sınırlanır."},
+{n:38,u:2,b:"Theodore Engelmann 1883'te yaptığı deneyde prizmadan geçirdiği ışıkları ipliksi alg üzerine düşürmüş ve ortama oksijenli solunum yapan bakteriler eklemiştir.",s:"Bakterilerin en fazla mor, mavi ve kırmızı ışığın düştüğü bölgelerde kümelenmesinin nedenini Engelmann deneyi bağlamında açıklayınız.",c:"Klorofil en çok mor, mavi ve kırmızı ışığı soğurur. Bu bölgelerde en hızlı fotosentez yapılır ve bol O2 üretilir. Oksijen seven (aerob) bakteriler de bu bölgelerde kümelenir."},
+{n:39,u:2,b:"Kapalı bir cam fanusa konulan saksı bitkisinin yanına potasyum hidroksit (KOH) kristali yerleştirildiğinde fotosentezin durduğu tespit edilir.",s:"Ortama konulan KOH, NaOH veya Ca(OH)2 gibi bileşiklerin fotosentez hızını düşürme nedenini biyokimyasal olarak açıklayınız.",c:"Bu bileşikler kimyasal olarak CO2 tutucudur. Ortamdaki karbondioksiti bağlayarak gaz miktarını sıfırlar; CO2 bulunmadığı için Calvin döngüsü ve fotosentez durur."},
+{n:40,u:2,b:"Sanayi bölgesine yakın bir ormanda asit yağmurları sonrasında toprağın pH değerinin aşırı düştüğü ve bitki gelişiminin durduğu gözlenir.",s:"Toprak pH değişiminin fotosentez hızı üzerindeki olumsuz etkisini enzimlerin çalışma prensipleriyle açıklayınız.",c:"Fotosentez reaksiyonları enzimler varlığında yürür. Her enzimin aktif çalıştığı bir optimum pH aralığı vardır. Aşırı asidik pH enzimlerin yapısını bozarak fotosentezi durdurur."},
+// ---- Ünite 1.3
+{n:41,u:3,b:"Jan Baptist van Helmont 17. yüzyılda bir söğüt fidanını tartarak kuru toprağa dikmiş, 5 yıl boyunca sadece yağmur suyuyla sulamıştır. 5 yıl sonunda söğüt ağacı yaklaşık 72,5 kg ağırlaşırken toprak kütlesi sadece 0,1 kg azalmıştır.",s:"Helmont'un bitki kütlesindeki artışı sadece sulama suyuna bağlamasındaki bilimsel eksikliği günümüz fotosentez bilgileriyle açıklayınız.",c:"Helmont bitkinin atmosferden aldığı karbondioksit (CO2) gazını hesaba katmamıştır. Bitki kütlesindeki artışın temel sebebi atmosferden alınan CO2'deki karbon ve oksijen atomlarının besin yapısına katılmasıdır."},
+{n:42,u:3,b:"Joseph Priestley 1774'te cam bir kavanoza yanan mum ve canlı bir fare koymuş, mumun söndüğünü ve farenin öldüğünü gözlemlemiştir. Aynı ortama canlı bir bitki koyduğunda ise farenin yaşadığını tespit etmiştir.",s:"Priestley'in 'bitkilerin kirlenen havayı temizlediği' yönündeki tarihi çıkarımını fotosentez reaksiyonları açısından açıklayınız.",c:"Priestley bitkinin mum ve farenin solunumuyla oluşan CO2'yi kullandığını ve ortama oksijen (O2) vererek kirli havayı temizlediğini (ortamı O2 ile zenginleştirdiğini) ispatlamıştır."},
+{n:43,u:3,b:"Jan Ingenhousz 1779 yılında su bitkileriyle yaptığı deneylerde bitkilerin sadece yeşil kısımlarının ve yalnızca ışık altında oksijen kabarcıkları çıkardığını gözlemlemiştir.",s:"Ingenhousz'un bu deneyle fotosentez mekanizmasına sağladığı iki temel tarihi katkıyı yazınız.",c:"1. Fotosentezin gerçekleşmesi için güneş ışığının şart olduğunu gösterdi. 2. Fotosentezin ve oksijen üretiminin bitkinin sadece klorofil içeren yeşil kısımlarında yapıldığını ortaya koydu."},
+{n:44,u:3,b:"Robert Hill 1937'de izole kloroplastlarla çalışırken ortamda karbondioksit bulunmasa dahi uygun bir elektron alıcısı ve ışık varlığında O2 gazı çıktığını göstermiştir (Hill Reaksiyonu).",s:"Robert Hill'in bu deneyiyle açığa çıkan oksijenin kökenine dair ispatladığı hayati gerçeği açıklayınız.",c:"Hill, fotosentezde açığa çıkan oksijen gazının kökeninin karbondioksit değil, ışık altında fotolize uğrayan su (H2O) molekülü olduğunu kesin olarak ispatlamıştır."},
+{n:45,u:3,b:"Melvin Calvin ve arkadaşları 1946 yılında radyoaktif izotoplar kullanarak fotosentezin ışığın kullanılmadığı evresindeki karbon metabolizmasını adım adım açıklamışlardır.",s:"Calvin döngüsü adı verilen bu keşfin biyoloji bilimine sunduğu temel katkıyı ve ödüllendirilmesini yazınız.",c:"Atmosferik karbondioksitin organik bileşiklere (PGAL/glikoz) dönüşüm basamakları aydınlatılmıştır. Bu çalışmayla Melvin Calvin 1961 Nobel Kimya Ödülü'ne layık görülmüştür."},
+{n:46,u:3,b:"Fotosentezin genel kimyasal denklemi 6CO2 + 12H2O → C6H12O6 + 6O2 + 6H2O şeklinde ifade edilir.",s:"Eşitliğin her iki tarafında da su (H2O) molekülünün bulunmasının biyokimyasal anlamını açıklayınız.",c:"Bu durum fotosentez tepkimelerinde suyun hem tüketildiğini (ışıklı evrede fotolizle) hem de yeniden üretildiğini (Calvin döngüsündeki bağ oluşumlarında) gösterir."},
+{n:47,u:3,b:"Fotosentez denkleminde reaksiyona giren ve çıkan su molekülleri sadeleştirildiğinde net denklem 6CO2 + 6H2O → C6H12O6 + 6O2 hâlini alır.",s:"Net fotosentez denklemine göre 1 molekül glikoz sentezlenebilmesi için tüketilmesi gereken CO2 ve H2O molekül sayılarını yazınız.",c:"1 molekül glikoz (C6H12O6) sentezi için net 6 molekül karbondioksit (CO2) ve 6 molekül su (H2O) tüketilmesi gerekir."},
+{n:48,u:3,b:"Yeryüzündeki tüm fotosentetik organizmalar (bitkiler, algler, öglena, fotosentetik bakteriler) besin sentezlerken ortak bir karbon kaynağı kullanırlar.",s:"Tüm fotosentez çeşitlerinde tüketilen bu tek ve ortak karbon kaynağının adını ve formülünü yazınız.",c:"Tüm fotosentez çeşitlerinde tüketilen tek ve ortak karbon kaynağı karbondioksittir (CO2)."},
+{n:49,u:3,b:"Bitkiler fotosentezde hidrojen kaynağı olarak su (H2O) kullanırken mor kükürt bakterileri hidrojen sülfür (H2S) kullanırlar.",s:"Hidrojen kaynaklarının farklı olmasının bu canlıların atmosfere veya ortama bıraktıkları yan ürünlere etkisini açıklayınız.",c:"Hidrojen kaynağı olarak H2O kullananlar ortama oksijen (O2) gazı verir; H2S kullanan mor kükürt bakterileri ise ortama kükürt (S) yan ürünü bırakır."},
+{n:50,u:3,b:"Mor kükürt bakterilerinin gerçekleştirdiği fotosentez reaksiyonu 6CO2 + 12H2S → C6H12O6 + 12S + 6H2O şeklindedir.",s:"Bu bakterilerin fotosentez yapmalarına rağmen neden atmosfere oksijen gazı veremediklerini denklem üzerinden açıklayınız.",c:"Çünkü elektron ve hidrojen kaynağı olarak su yerine hidrojen sülfür (H2S) kullanırlar. Suyun fotolizi gerçekleşmez; yapıdaki sülfür ortama kükürt (S) olarak ayrılır."},
+{n:51,u:3,b:"Fotosentez tepkimesine giren karbondioksit (CO2) molekülündeki işaretli bir karbon (¹⁴C) atomu izleniyor.",s:"İşaretli karbon atomunun fotosentez sonucunda sentezlenen hangi molekülün yapısında rastlanacağını yazınız.",c:"Karbondioksitteki karbon atomu Calvin döngüsünde fiksasyona uğrayarak doğrudan sentezlenen glikozun (C6H12O6) yapısına katılır."},
+{n:52,u:3,b:"Fotosentez tepkimesine giren karbondioksitteki oksijen atomu radyoaktif izotopla (¹⁸O) işaretleniyor.",s:"Tepkime tamamlandığında işaretli oksijen atomlarına hangi ürünlerin yapısında rastlanacağını yazınız.",c:"Karbondioksitteki oksijen atomları sentezlenen glikozun (C6H12O6) ve reaksiyon sonucunda açığa çıkan suyun (H2O) yapısına katılır."},
+{n:53,u:3,b:"Fotosentez reaksiyonuna giren su (H2O) molekülündeki hidrojen atomları izotopik olarak izleniyor.",s:"Sudaki hidrojen atomlarının fotosentez sonrasında oluşturulan hangi ürünlerin yapısına katılacağını açıklayınız.",c:"Sudaki hidrojen atomları NADPH ile taşınarak sentezlenen glikozun (C6H12O6) ve reaksiyon sonunda çıkan suyun (H2O) yapısına katılır."},
+{n:54,u:3,b:"Bir seradaki bitkilere oksijeni ağır izotopla işaretlenmiş su (H2¹⁸O) verilerek fotosentez yapmaları sağlanıyor.",s:"Deney sonucunda işaretli ağır oksijenin (¹⁸O) sadece atmosfere verilen oksijen gazında rastlanmasının nedenini açıklayınız.",c:"Çünkü su ışıklı evrede fotolize uğrar; sudaki oksijen atomları serbest kalarak atmosfere verilen oksijen gazını (O2) oluşturur."},
+{n:55,u:3,b:"Araştırmacılar bir su bitkisine karbonu işaretli CO2 ve oksijeni işaretli H2O vererek izotop takibi yapmışlardır.",s:"Sudaki oksijen ile karbondioksitteki oksijenin izlediği yolların tamamen farklı olmasının fotosentez mekanizmasındaki temel nedenini açıklayınız.",c:"Su ışıklı evrede parçalanıp oksijenini atmosfere verirken; karbondioksit Calvin döngüsünde indirgenerek oksijenini glikoz ve suya bırakır. İki madde farklı evrelerde ve farklı mekanizmalarla kullanılır."},
+{n:56,u:3,b:"Bitkiler, algler, öglena ve siyanobakteriler dünyadaki atmosferik oksijen dengesinin korunmasında anahtar role sahiptir.",s:"Bu canlı grubunun tamamının atmosferik oksijen üretebilmesini kullandıkları hidrojen kaynağı bağlamında açıklayınız.",c:"Bu canlıların tamamı fotosentezde elektron ve hidrojen kaynağı olarak su (H2O) kullanırlar. Suyun fotolizi sonucu açığa çıkan oksijen atmosfere verilir."},
+{n:57,u:3,b:"Yeşil bir yaprağın kloroplast taşıyan hücrelerinde ışık varlığında CO2 ve H2O birleşerek glikoz sentezlenir.",s:"Bu sentez sırasında ışık enerjisinin glikoz molekülündeki hangi yapısal unsura aktarıldığını açıklayınız.",c:"Işık enerjisi klorofille tutulup ATP ve NADPH'a çevrilir; ardından glikozu oluşturan atomlar arasındaki kimyasal bağ enerjisine dönüştürülür."},
+{n:58,u:3,b:"Bir akvaryum içerisindeki Elodea su bitkisinin üzerine ışık tutulduğunda yapraklardan yukarı doğru gaz kabarcıklarının yükseldiği görülür.",s:"Işık şiddeti artırıldığında gaz kabarcıklarının hızlanmasının biyolojik mekanizmasını suyun fotoliziyle ilişkilendirerek açıklayınız.",c:"Işık şiddeti arttıkça ışığa bağımlı reaksiyonlar ve suyun fotolizi hızlanır. Birim zamanda daha fazla su parçalandığı için açığa çıkan O2 kabarcık sayısı artar."},
+{n:59,u:3,b:"Bazı fotosentetik bakteriler hidrojen kaynağı olarak doğrudan hidrojen gazını (H2) kullanırlar (6CO2 + 12H2 → C6H12O6 + 6H2O).",s:"Bu bakterilerin fotosentezi sonucunda neden hiçbir yan ürün gaz açığa çıkmadığını denklem üzerinden açıklayınız.",c:"Çünkü hidrojen kaynağında (H2) oksijen veya kükürt gibi serbest kalacak bir yan element bulunmaz; hidrojenlerin tamamı glikoz ve su yapısına katılır."},
+{n:60,u:3,b:"Fotosentezin kimyasal tepkime denklemlerinde kütlenin ve atom sayılarının korunması yasası geçerlidir.",s:"Giren 6CO2 ve 12H2O moleküllerindeki toplam karbon, hidrojen ve oksijen atom sayılarını hesaplayarak ürünlerdeki dağılım dengesini açıklayınız.",c:"Girenlerde 6 C, 24 H, 24 O vardır. Ürünlerde (C6H12O6 + 6O2 + 6H2O): 6 C (glikozda), 24 H (12 glikozda, 12 suda), 24 O (6 glikozda, 12 oksijen gazında, 6 suda) olup atom sayıları eşittir."}
+];
+
+// ---------- OGM materyal soruları
+const OGM = [
+ {topic:"Hücre Bölünmesinin Gerekliliği",
+  intro:"Tek hücrelilerde bölünme üreme içindir; çok hücrelilerde büyüme-gelişme, yara onarımı ve üreme için. Gerekçeler: hacim/yüzey oranının bozulması (hacim r³, yüzey r² ile artar), çekirdeğin yönetimde yetersiz kalması, madde alışverişinin aksaması, hormonlar (ör. büyüme hormonu) ve kanserojen maddeler. Amip deneyi: çekirdeksiz kısım ölür; bölünme büyüklüğüne ulaşmamış amip kesilirse sitoplazmayı onarır, ulaşmışsa çekirdekli kısım bölünür.",
+  qs:[
+   {id:"o1",type:"mc",q:"Hücreler; I. sitoplazmanın çekirdeğin yönetemeyeceği kadar büyümesi, II. hücre yüzeyinin madde alışverişine yeterli olmaması, III. çok hücreli canlılarda çeşitli hormonların etkisi — verilenlerden hangilerinin etkisiyle bölünme geçirir?",o:["Yalnız I","I ve II","I ve III","II ve III","I, II ve III"],a:4,e:"Üç durum da bölünmeyi tetikler: çekirdek kontrolünün yetersizliği, yüzeyin madde alışverişine yetmemesi ve hormonlar."},
+   {id:"o2",type:"open",q:"Bir hücrede hangi değişikliklerin olması hücrenin bölünmeye başlamasına sebep olur?",c:"Hacim/yüzey oranının artması, hücre yüzeyinden madde alışverişinin yeterince gerçekleşememesi, çekirdeğin yönetimde yetersiz kalması, çekirdeğin bölünme emrini vermesi, hormonlar ve bazı kanserojen maddeler."},
+   {id:"o3",type:"mc",q:"Canlılar mitoz hücre bölünmesi ile; I. çoğalma, II. büyüme-gelişme, III. kalıtsal çeşitlilik — verilenlerden hangilerini gerçekleştirebilir?",o:["Yalnız I","Yalnız II","Yalnız III","I ve II","I, II ve III"],a:3,e:"Mitozla oluşan hücreler ana hücreyle genetik olarak aynıdır; kalıtsal çeşitlilik sağlanmaz."}
+ ]},
+ {topic:"Eşeysiz Üreme",
+  intro:"Döllenme olmadan, mitoza dayanan, tek ata yeterli, hızlı çoğalma; yavrular ata ile genetik olarak aynı. Çeşitleri: bölünerek üreme (en hızlı; amip her yöne, paramesyum enine, öglena boyuna), tomurcuklanma (bira mayası, hidra, mercan), sporla üreme (bazı mantar ve algler, eğrelti otu, Plasmodium), rejenerasyonla üreme (planarya, deniz yıldızı; kertenkelenin kuyruğunu yenilemesi üreme değildir), partenogenez (bal arısı erkekleri n; bazı balık, kurbağa, sürüngenlerde 2n), bitkilerde vejetatif üreme.",
+  qs:[
+   {id:"o4",type:"mc",q:"Deniz yıldızında kesilen parçanın yeni birey oluşturması, bira mayasında tomurcuk oluşması ve Plasmodium sporlarının kan hücresinde çoğalması için ortak olan hangisidir?",o:["Mitoz temeline dayanması","Genetik farklılıklara yol açması","Gamet oluşturulması","Üreme organlarında gerçekleşmesi","Değişen çevre koşullarına dirençli bireyler oluşması"],a:0,e:"Üçü de eşeysiz üremedir; eşeysiz üremenin temeli mitozdur."},
+   {id:"o5",type:"mc",q:"Aşağıdaki canlılardan hangisinde rejenerasyonla çoğalma gözlenir?",o:["Uğur böceği","Kertenkele","Planarya","Ahtapot","Ağaç kurbağası"],a:2,e:"Planarya parçalarından yeni bireyler oluşturur. Kertenkelenin kuyruk yenilemesi onarımdır, üreme değildir."},
+   {id:"o6",type:"match",q:"Eşeysiz üreme çeşitlerini örnek canlılarla eşleştiriniz.",left:["1. Bölünerek üreme","2. Tomurcuklanma","3. Sporla üreme","4. Rejenerasyon","5. Partenogenez"],right:["Eğrelti otu","Öglena","Arı","Deniz yıldızı","Bira mayası"],ans:[1,4,0,3,2],e:"1-Öglena, 2-Bira mayası, 3-Eğrelti otu, 4-Deniz yıldızı, 5-Arı"}
+ ]},
+ {topic:"Hücre Döngüsünün Kontrolü",
+  intro:"G₁ kontrol noktası: hücre bölünme büyüklüğüne ulaştıysa 'devam et' sinyali, S evresine geçilir. G₂: DNA doğru eşlendi mi, hasar var mı? M: tüm kromozomlar iğ ipliklerine bağlandı mı? Sinyal gelmezse hücre G₀ (durgun) evresine geçer; sinir, kas, karaciğer hücreleri. Kontrol bozulursa tümör (iyi/kötü huylu); kanser hücrelerinin kan ve lenfle yayılmasına metastaz denir. Kanseri inceleyen bilim dalı onkoloji; tedavide radyoterapi ve kemoterapi kullanılır.",
+  qs:[
+   {id:"o7",type:"mc",q:"Bir hücrenin mitozu sırasında aşağıdakilerden hangisi 'dur' sinyalinin verilmesine neden olur?",o:["Kromozomlar ekvatoral düzleme sıralanmışsa","Ortamda yeterli besin bulunuyorsa","DNA hasarsız bir şekilde eşlenmişse","Hücre uygun büyüklüğe ulaşmışsa","İğ iplikleri kromozomlara tutunmamışsa"],a:4,e:"M kontrol noktası, kromozomların iğ ipliklerine bağlanıp bağlanmadığını denetler; bağlanmamışsa 'dur' sinyali verilir."},
+   {id:"o8",type:"mc",q:"Kontrolün bozulup sürekli 'devam et' sinyalinde takılı kalması K, K hücrelerinin kan ve lenfle diğer dokulara yayılması L'dir. I. K kanseri ifade eder, kontrolsüz çoğalmayla belirti verir. II. L metastazdır; tümör vücudun farklı bölgelerinde de oluşabilir. III. L'nin önlenmesinde en etkili yöntem tümörlü dokunun ameliyatla çıkarılmasıdır. Hangileri doğrudur?",o:["Yalnız I","Yalnız II","Yalnız III","I ve II","I, II ve III"],a:3,e:"Metastaz başladıktan sonra hücreler vücuda yayıldığı için tek başına ameliyat en etkili önlem değildir; III yanlıştır."},
+   {id:"o9",type:"open",q:"Vücudumuzda G₀ evresinde bulunan hücrelere örnekler veriniz.",c:"Sinir, kas ve karaciğer hücreleri."}
+ ]},
+ {topic:"Mitoz ve Hücre Döngüsü",
+  intro:"Genom: genlerin tümü. Kromatin: DNA + protein. Kromozom: kromatinin bölünmede kısalıp kalınlaşmış hâli. Kardeş kromatit: eşlenmiş kromozomun iki kopyası. İnterfaz = G₁ (büyüme, organel çoğaltma) + S (DNA eşlenmesi; bundan sonra bölünme durdurulamaz) + G₂ (son hazırlıklar, sentrozom). Mitotik faz = karyokinez (profaz, metafaz, anafaz, telofaz) + sitokinez. Olgun alyuvar bölünme yeteneğini kaybeder; embriyonik hücrelerde G₁ ve G₂ yoktur.",
+  qs:[
+   {id:"o10",type:"mc",q:"Hücre döngüsü pastasında I: S, II: G₁, III: Sitokinez, IV: Karyokinez, V: G₂ bölümleri gösterilmiştir. Hangileri interfazı ifade eder?",o:["I - II - III","I - II - V","II - III - IV","II - IV - V","III - IV - V"],a:1,e:"İnterfaz = G₁ + S + G₂ → II, I ve V."},
+   {id:"o11",type:"mc",q:"Bölünmeye hazırlık / Çekirdek bölünmesi / Sitoplazma bölünmesi sıralamasında hangisi doğrudur?",o:["İnterfaz / Sitokinez / G₂","G₁ / G₂ / Sitokinez","İnterfaz / Karyokinez / Sitokinez","G₁ / S / Karyokinez","Karyokinez / İnterfaz / G₁"],a:2,e:"Hazırlık interfazda, çekirdek bölünmesi karyokinezde, sitoplazma bölünmesi sitokinezde olur."},
+   {id:"o12",type:"open",q:"Kromozom ve kardeş kromatit kavramlarını açıklayınız.",c:"Bölünme sırasında kromatin ipliklerin kısalıp kalınlaşarak özel katlanmalar sonucu oluşturduğu yapıya kromozom denir. Eşlenen bir kromozomun iki parçasından her birine kromatit, birbirinin kopyası olan iki kromatite kardeş kromatitler denir."}
+ ]},
+ {topic:"Mitotik Evre",
+  intro:"Profaz: kromatin sıkılaşır, sentrozomlar iğ ipliği oluşturup kutuplara gider, çekirdek zarı ve çekirdekçik kaybolur. Metafaz: kromozomlar ekvatorda tek sıra; en net görüldüğü evre. Anafaz: kardeş kromatitler ayrılır, kutuplara eşit sayıda kromozom gider. Telofaz: kromozomlar kromatine döner, çekirdek zarı oluşur, iğ iplikleri kaybolur. Sitokinez: hayvanda boğumlanma (mikrofilament), bitkide Golgi kaynaklı ara lamel. Mitozda kromozom sayısı sabit kalır, genetik çeşitlilik olmaz; n, 2n, 3n hücreler mitoz geçirebilir.",
+  qs:[
+   {id:"o13",type:"mc",q:"Föydeki mikroskop görüntüleri I, II, III ve IV olarak verilmiştir (I: kromozomlar belirginleşiyor, III: kromozomlar ekvatorda, II: kromatitler kutuplara ayrılıyor, IV: iki yeni çekirdek). Evrelerin gerçekleşme sırası hangisidir?",o:["I - II - III - IV","I - III - II - IV","III - I - II - IV","IV - II - III - I","IV - III - II - I"],a:1,e:"Profaz (I) → Metafaz (III) → Anafaz (II) → Telofaz (IV)."},
+   {id:"o14",type:"mc",q:"Bitki ve hayvan hücrelerinin mitozu; I. DNA'nın replikasyon şekli, II. iğ ipliklerinin oluşum şekli, III. sitoplazmanın bölünme şekli — verilenlerin hangilerinden dolayı farklılık göstermez?",o:["Yalnız I","Yalnız II","Yalnız III","I ve II","I ve III"],a:0,e:"DNA eşlenmesi aynıdır. İğ ipliği (hayvanda sentrozomla) ve sitokinez (boğumlanma / ara lamel) farklıdır."},
+   {id:"o15",type:"mc",q:"2n = 26 kromozomlu bir hücre peş peşe üç mitoz geçirirse a) oluşacak hücre sayısı, b) hücrelerin kromozom sayısı ne olur?",o:["a: 2, b: 26","a: 4, b: 26","a: 8, b: 26","a: 8, b: 13","a: 4, b: 13"],a:2,e:"2³ = 8 hücre; mitozda kromozom sayısı değişmez: 26."}
+ ]}
+];
+
+// ---------- state
+const KEY="bio10-atolye-v1";
+let st={};
+try{st=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){st={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+const TOTAL=60+4+15;
+function updateProgress(){
+  const k=Object.values(st).filter(v=>v==="known").length;
+  document.getElementById("pbar").style.width=(k/TOTAL*100)+"%";
+  document.getElementById("ptext").textContent=k+" / "+TOTAL+" soru bilindi";
+}
+function selfMark(card,id){
+  const row=document.createElement("div");row.className="btns";
+  row.innerHTML='<button class="act" type="button" data-v="known">Bildim</button><button class="act amber" type="button" data-v="again">Tekrar edeceğim</button>';
+  const apply=()=>{card.classList.toggle("known",st[id]==="known");card.classList.toggle("again",st[id]==="again")};
+  row.addEventListener("click",e=>{const v=e.target.dataset.v;if(!v)return;st[id]=v;save();apply();updateProgress()});
+  apply();return row;
+}
+
+// ---------- tabs
+const SECTIONS=[
+ {id:"atp",label:"ATP ve Enerji",cnt:"1–20"},
+ {id:"isik",label:"Işık ve Besin Sentezi",cnt:"21–40"},
+ {id:"madde",label:"Fotosentez Maddeleri",cnt:"41–60"},
+ {id:"yazili",label:"Yazılı Provası",cnt:"4 soru"},
+ {id:"bolunme",label:"Hücre Bölünmesi",cnt:"15 soru"}
+];
+const tabs=document.getElementById("tabs"),main=document.getElementById("main");
+SECTIONS.forEach(s=>{
+  const b=document.createElement("button");b.type="button";b.role="tab";b.id="tab-"+s.id;
+  b.innerHTML=s.label+"<small>"+s.cnt+"</small>";b.onclick=()=>show(s.id);tabs.appendChild(b);
+  const p=document.createElement("section");p.className="panel";p.id="p-"+s.id;p.hidden=true;main.appendChild(p);
+});
+function show(id){
+  SECTIONS.forEach(s=>{document.getElementById("p-"+s.id).hidden=s.id!==id;document.getElementById("tab-"+s.id).setAttribute("aria-selected",s.id===id)});
+  try{localStorage.setItem(KEY+"-tab",id)}catch(e){}
+}
+
+// ---------- bank panels
+const UNIT_INTRO={
+ 1:["Ünite 1.1 · Canlılık için enerjinin önemi","ATP (adenin + riboz + 3 fosfat) hücrenin ortak enerji molekülüdür; depolanmaz, zardan geçmez, her hücre kendi ATP'sini üretir.",["ADP + Pi + enerji → ATP + H2O : fosforilasyon (dehidrasyon)","ATP + H2O → ADP + Pi + enerji : defosforilasyon (hidroliz)","Ekzergonik enerji verir (solunum); endergonik enerji ister (sentez, taşıma, kasılma)"]],
+ 2:["Ünite 1.2 · Işık enerjisi kullanılarak besin sentezi","Fototroflar ışık enerjisini klorofille yakalar. Görünür ışık 380–750 nm; dalga boyu kısaldıkça enerji artar.",["Işığa bağımlı evre (granum/tilakoid): fotoliz, ATP ve NADPH üretimi, O2 çıkışı","Işıktan bağımsız evre (stroma, Calvin): CO2 + ATP + NADPH → PGAL","Hız faktörleri: ışık, CO2, sıcaklık, pH, su, mineral; en yetersiz faktör hızı belirler"]],
+ 3:["Ünite 1.3 · Fotosentezde kullanılan ve üretilen maddeler","Van Helmont, Priestley, Ingenhousz, Engelmann, Hill ve Calvin'in deneyleri fotosentezin parçalarını birleştirdi.",["Genel: 6CO2 + 12H2O → C6H12O6 + 6O2 + 6H2O","O2'nin kaynağı sudur; CO2'nin C ve O'su glikoz ve suya geçer","Mor kükürt bakterileri H2S kullanır, O2 yerine S bırakır"]]
+};
+function bankPanel(pid,unit){
+  const p=document.getElementById("p-"+pid);
+  const [h,t,li]=UNIT_INTRO[unit];
+  p.innerHTML='<div class="intro"><h2>'+h+'</h2><p>'+S(t)+'</p><ul>'+li.map(x=>"<li>"+S(x)+"</li>").join("")+'</ul></div>';
+  const tools=document.createElement("div");tools.className="tools";
+  tools.innerHTML='<button class="chip" type="button" aria-pressed="false" data-f="all">Tümü</button><button class="chip" type="button" aria-pressed="false" data-f="again">Sadece tekrar edeceklerim</button><button class="chip" type="button" aria-pressed="false" data-f="open">Tüm cevapları aç</button>';
+  p.appendChild(tools);
+  const list=document.createElement("div");list.style.display="grid";list.style.gap="14px";p.appendChild(list);
+  BANK.filter(q=>q.u===unit).forEach(q=>{
+    const id="b"+q.n,c=document.createElement("article");c.className="card";c.dataset.id=id;
+    c.innerHTML='<div class="qhead"><span class="qnum">Soru '+q.n+'</span><span class="tag">Bağlam temelli</span></div><p class="ctx"><b>Bağlam:</b> '+S(q.b)+'</p><p class="q">'+S(q.s)+'</p><textarea id="t-'+id+'" placeholder="Cevabını buraya yazabilirsin…"></textarea><div class="btns"><button class="act primary" type="button">Cevabı göster</button></div><p class="ans" hidden>'+S(q.c)+'</p>';
+    const ans=c.querySelector(".ans"),btn=c.querySelector(".act.primary");
+    btn.onclick=()=>{ans.hidden=!ans.hidden;btn.textContent=ans.hidden?"Cevabı göster":"Cevabı gizle"};
+    c.appendChild(selfMark(c,id));list.appendChild(c);
+  });
+  tools.addEventListener("click",e=>{
+    const f=e.target.dataset.f;if(!f)return;
+    if(f==="open"){list.querySelectorAll(".card").forEach(c=>{c.querySelector(".ans").hidden=false;c.querySelector(".act.primary").textContent="Cevabı gizle"});return}
+    tools.querySelectorAll("[data-f=all],[data-f=again]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===f));
+    list.querySelectorAll(".card").forEach(c=>c.hidden= f==="again" && st[c.dataset.id]!=="again");
+  });
+}
+bankPanel("atp",1);bankPanel("isik",2);bankPanel("madde",3);
+
+// ---------- Photosynthesis model SVG
+const POS={P:[78,96,"Pigment"],W:[78,150],O:[78,198],C:[292,22],G:[292,206],N1:[214,128],N2:[214,154],R1:[372,50],R2:[372,82],R3:[372,128],R4:[372,160]};
+const CORRECT={P:"Klorofil",W:"H2O",O:"1/2 O2",C:"CO2",G:"Glikoz",N1:"NADP+",N2:"NADPH",R1:"ATP",R2:"ADP+Pi",R3:"NADPH",R4:"NADP+"};
+const MODELS=[
+ {name:"1. Modelleme",v:{W:"CO2",C:"H2O"},groups:[["W"],["C"]]},
+ {name:"2. Modelleme",v:{O:"Glikoz",G:"1/2 O2",R1:"ADP+Pi",R2:"ATP"},groups:[["O"],["G"],["R1","R2"]]},
+ {name:"3. Modelleme",v:{P:"Glikoz",W:"CO2",O:"H2O",N1:"NADPH",N2:"NADP+",C:"1/2 O2",G:"Klorofil"},groups:[["P"],["W"],["O"],["N1","N2"],["C"],["G"]]}
+];
+const lab=t=>t.replace("CO2","CO₂").replace("H2O","H₂O").replace("1/2 O2","½ O₂").replace("NADP+","NADP⁺");
+function modelSVG(vals){
+  const slot=(k)=>{const [x,y]=POS[k],t=lab(vals[k]),w=Math.max(54,t.length*8+16);
+    return '<g class="slot" data-k="'+k+'" tabindex="0" role="button" aria-label="'+t+'"><rect x="'+(x-w/2)+'" y="'+(y-12)+'" width="'+w+'" height="24" rx="6"/><text x="'+x+'" y="'+(y+5)+'" text-anchor="middle" font-size="13">'+t+'</text></g>'};
+  const arr=(x1,y1,x2,y2)=>'<line class="wire" x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" marker-end="url(#ah)"/>';
+  return '<svg viewBox="0 0 440 230" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0,0L10,5L0,10z"/></marker></defs>'+
+  '<circle cx="24" cy="40" r="13" style="fill:var(--atp)" opacity=".85"/><text x="24" y="70" text-anchor="middle" font-size="10" style="fill:var(--muted)">ışık</text>'+
+  arr(40,52,58,82)+arr(78,138,78,110)+'<text x="86" y="128" font-size="10" style="fill:var(--muted)">2e⁻</text>'+arr(78,162,78,186)+
+  '<polyline class="wire" points="90,40 108,40 108,56 126,56 126,72 144,72 144,88 162,88 162,104 180,104 180,118 196,118" />'+arr(78,84,90,42)+
+  '<text x="96" y="34" font-size="10" style="fill:var(--muted)">2e⁻ (ETS)</text>'+
+  '<circle cx="150" cy="44" r="13" style="fill:var(--atp-soft);stroke:var(--atp)"/><text x="150" y="48" text-anchor="middle" font-size="9">ATP</text>'+
+  '<path class="wire" d="M164,40 Q210,10 252,52" marker-end="url(#ah)"/><text x="218" y="86" font-size="11" text-anchor="middle">ADP+Pi</text>'+arr(258,82,242,84)+
+  '<line class="wire" x1="100" y1="154" x2="180" y2="154" stroke-dasharray="3 3"/><text x="122" y="148" font-size="10" style="fill:var(--muted)">H⁺ + H⁺</text>'+
+  '<path class="wire" d="M248,154 Q262,150 270,134" marker-end="url(#ah)"/>'+
+  '<circle cx="292" cy="112" r="36" style="fill:var(--leaf-soft);stroke:var(--leaf)"/><text x="292" y="109" text-anchor="middle" font-size="11" style="fill:var(--leaf)">Calvin</text><text x="292" y="123" text-anchor="middle" font-size="11" style="fill:var(--leaf)">döngüsü</text>'+
+  arr(292,36,292,74)+arr(292,150,292,192)+arr(326,96,346,70)+arr(372,96,372,114)+arr(372,142,372,148)+
+  ['P','W','O','C','G','N1','N2','R1','R2','R3','R4'].map(slot).join("")+'</svg>';
+}
+
+// ---------- Yazılı panel
+(function(){
+ const p=document.getElementById("p-yazili");
+ p.innerHTML='<div class="intro"><h2>Yazılıya Hazırlanıyorum · 1. Dönem 1. Yazılı</h2><p>Dört açık uçlu soru, toplam 100 puan. Her soruyu çöz, ardından cevap anahtarı ve puanlama ölçütüyle kendini puanla.</p><div class="tblwrap"><table><tr><th>Soru</th><th>Öğrenme çıktısı</th><th>Beceriler</th><th>Puan</th></tr><tr><td class="num">1</td><td>BİY.10.1.1 Canlıların yaşamına devam edebilmesi için enerjinin gerekliliğini sorgulayabilme</td><td>KB2.6 Bilgi Toplama, KB2.7 Karşılaştırma, KB2.8 Sorgulama, FBAB8 Bilimsel Çıkarım Yapma, E1.1 Merak, KB2.14 Yorumlama</td><td class="num">20</td></tr><tr><td class="num">2</td><td>BİY.10.1.2 Fotosentez reaksiyonlarıyla ilgili bilimsel model oluşturabilme</td><td>FBAB8 Bilimsel Çıkarım Yapma, FBAB9 Bilimsel Model Oluşturma, KB2.7 Karşılaştırma</td><td class="num">2.1: 20<br>2.2: 20</td></tr><tr><td class="num">3</td><td>BİY.10.1.3 Fotosentezde kullanılan ve üretilen maddelerle ilgili deney yapabilme</td><td>FBAB7 Deney Yapma, FBAB8 Bilimsel Çıkarım Yapma, KB2.6 Bilgi Toplama, KB2.7 Karşılaştırma, KB2.8 Sorgulama</td><td class="num">3.1: 10<br>3.2: 10</td></tr><tr><td class="num">4</td><td>BİY.10.1.4 Kemosentez hakkında bilgi toplayabilme</td><td>KB2.6 Bilgi Toplama, FBAB8 Bilimsel Çıkarım Yapma</td><td class="num">20</td></tr></table></div><p class="score" id="yscore">Öz puanın: 0 / 100</p></div>';
+ const yscore={};const upd=()=>{document.getElementById("yscore").textContent="Öz puanın: "+Object.values(yscore).reduce((a,b)=>a+b,0)+" / 100"};
+ const rubric=(key,items)=>{const d=document.createElement("div");d.className="rubric";d.innerHTML=items.map((it,i)=>'<label><input type="radio" name="r-'+key+'" value="'+it[0]+'" id="r-'+key+'-'+i+'"> <span><b>'+it[0]+' P</b> · '+it[1]+'</span></label>').join("");d.addEventListener("change",e=>{yscore[key]=+e.target.value;upd()});return d};
+
+ // Soru 1
+ const c1=document.createElement("article");c1.className="card";
+ c1.innerHTML='<div class="qhead"><span class="qnum">Soru 1</span><span class="tag">20 puan</span></div><p class="ctx">Zeynep, öğretmeninin "Tüm canlı hücrelerin temel enerji kaynağı ATP\'dir." ifadesinden yola çıkarak "ATP üretimi engellenen bir hücre yaşamını sürdürebilir mi?" sorusuna yanıt aramak için maya hücreleriyle deney kurar. Deneyi aşağıda yeniden çalıştırabilirsin.</p>'+
+ '<div class="petris"><div class="petri"><b>1. Petri (Kontrol)</b><div class="dish" id="d1"></div><span>Glikoz + maya</span><span id="s1" class="tag">Hazır</span></div><div class="petri"><b>2. Petri (Deney)</b><div class="dish" id="d2"></div><span>Glikoz + maya + ATP üretimini engelleyen madde</span><span id="s2" class="tag">Hazır</span></div></div>'+
+ '<div class="btns"><button class="act primary" type="button" id="run1">Deneyi beklet</button><button class="act" type="button" id="re1">Baştan kur</button></div>'+
+ '<p class="q">Deney sonucundaki gözlem ve bulgulara dayanarak ATP molekülünün canlılık için yaşamsal önemini açıklayınız.</p><textarea id="y1t" placeholder="Cevabın…"></textarea><div class="btns"><button class="act primary" type="button">Cevap anahtarı</button></div><div class="ans" hidden>ATP üretimi durdurulan hücrelerde yaşamsal faaliyetler sona erer; bu, enerjinin sürekliliğiyle ilgilidir. Enerji canlılık için yalnızca önemli değil, aynı zamanda zorunludur. Canlı hücreler yaşamsal faaliyetlerini sürdürmek için ATP\'ye ihtiyaç duyar. Enerji üretimi durduğunda hücreler bölünemez, madde alışverişi yapamaz ve enzimatik reaksiyonları gerçekleştiremez; bu da hücrenin ölümüne yol açar.</div>';
+ const d1=c1.querySelector("#d1"),d2=c1.querySelector("#d2");
+ const seed=(d,n)=>{d.innerHTML="";for(let i=0;i<n;i++){const s=document.createElement("span");s.className="cell";const a=Math.random()*6.28,r=Math.random()*14;s.style.left=(54+Math.cos(a)*r)+"px";s.style.top=(54+Math.sin(a)*r)+"px";d.appendChild(s)}};
+ const reset1=()=>{seed(d1,6);seed(d2,6);c1.querySelector("#s1").textContent="Hazır";c1.querySelector("#s2").textContent="Hazır"};reset1();
+ c1.querySelector("#re1").onclick=reset1;
+ c1.querySelector("#run1").onclick=()=>{seed(d1,40);d1.querySelectorAll(".cell").forEach(s=>{const a=Math.random()*6.28,r=Math.random()*46;s.style.left=(54+Math.cos(a)*r)+"px";s.style.top=(54+Math.sin(a)*r)+"px"});
+   d2.querySelectorAll(".cell").forEach(s=>{s.style.background="var(--muted)";s.style.opacity=".5"});
+   c1.querySelector("#s1").textContent="Çoğalma görüldü";c1.querySelector("#s2").textContent="Hareketsizlik, çoğalma yok"};
+ const a1=c1.querySelector(".ans");c1.querySelectorAll(".act.primary")[1].onclick=()=>a1.hidden=!a1.hidden;
+ a1.after(rubric("y1",[[20,"Deney bulgularını ATP'nin zorunluluğuna bağladım (bölünme, madde alışverişi, enzimatik tepkime)"],[10,"Yalnız bulguyu yorumladım ya da yalnız enerjinin önemini söyledim"],[0,"Cevap yok veya yanlış"]]));
+ c1.appendChild(selfMark(c1,"y1"));p.appendChild(c1);
+
+ // Soru 2.1
+ const c2=document.createElement("article");c2.className="card";
+ c2.innerHTML='<div class="qhead"><span class="qnum">Soru 2.1</span><span class="tag">20 puan</span></div><p class="ctx">Üç öğrencinin fotosentez reaksiyonlarıyla ilgili hazırladığı modellemeler aşağıdadır.</p><p class="q">Modellerdeki bilimsel hataları görsel üzerinde işaretleyiniz ve en az hata içeren modellemeyi belirtiniz. Hatalı olduğunu düşündüğün kutucuklara tıkla.</p><div class="modeltabs" id="mt"></div><div class="svgbox" id="msvg"></div><div class="btns"><button class="act primary" type="button" id="mchk">Hataları göster</button><span class="score" id="msc"></span></div><p class="fb" id="mfb"></p>'+
+ '<div class="btns"><span class="q">En az hata hangi modelde?</span></div><div class="opts" id="least"></div><p class="fb" id="lfb"></p>';
+ let cur=0;const picks=[new Set(),new Set(),new Set()],revealed=[false,false,false];
+ const mt=c2.querySelector("#mt"),box=c2.querySelector("#msvg");
+ MODELS.forEach((m,i)=>{const b=document.createElement("button");b.className="chip";b.type="button";b.textContent=m.name;b.onclick=()=>{cur=i;drawM()};mt.appendChild(b)});
+ function drawM(){
+   const m=MODELS[cur];box.innerHTML=modelSVG(Object.assign({},CORRECT,m.v));
+   mt.querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",i===cur));
+   const wrongKeys=new Set(m.groups.flat());
+   box.querySelectorAll(".slot").forEach(g=>{const k=g.dataset.k;
+     if(revealed[cur]){g.classList.add(wrongKeys.has(k)?(picks[cur].has(k)?"hit":"miss"):(picks[cur].has(k)?"":"")); if(picks[cur].has(k)&&!wrongKeys.has(k))g.classList.add("miss")}
+     else if(picks[cur].has(k))g.classList.add("hit");
+     const tog=()=>{if(revealed[cur])return;picks[cur].has(k)?picks[cur].delete(k):picks[cur].add(k);drawM()};
+     g.onclick=tog;g.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};});
+   const sc=c2.querySelector("#msc"),fb=c2.querySelector("#mfb");
+   sc.textContent=picks[cur].size+" kutu işaretledin";
+   if(revealed[cur]){const found=m.groups.filter(g=>g.some(k=>picks[cur].has(k))).length;const extra=[...picks[cur]].filter(k=>!wrongKeys.has(k)).length;
+     fb.className="fb "+(found===m.groups.length&&!extra?"ok":"no");
+     fb.textContent=m.name+": "+m.groups.length+" hata var, "+found+" tanesini buldun"+(extra?", "+extra+" doğru kutuyu yanlış işaretledin":"")+". Kırmızı kesikli kutular kaçırdıkların."+(cur===1?" (ADP+Pi ile ATP'nin yer değiştirmesi tek hata sayılır.)":cur===2?" (NADPH ile NADP⁺'nın yer değiştirmesi tek hata sayılır.)":"")}
+   else fb.textContent="";
+ }
+ c2.querySelector("#mchk").onclick=()=>{revealed[cur]=true;drawM()};
+ const least=c2.querySelector("#least");
+ ["1. Modelleme","2. Modelleme","3. Modelleme"].forEach((t,i)=>{const b=document.createElement("button");b.className="opt";b.type="button";b.textContent=t;b.onclick=()=>{least.querySelectorAll(".opt").forEach(x=>x.className="opt");b.classList.add(i===0?"right":"wrong");const f=c2.querySelector("#lfb");f.className="fb "+(i===0?"ok":"no");f.textContent=i===0?"Doğru. 1. modelde 2, 2. modelde 3, 3. modelde 6 hata var.":"Tekrar bak: hata sayılarını karşılaştır."};least.appendChild(b)});
+ drawM();
+ c2.appendChild(rubric("y21",[[20,"Hataları tam ve doğru işaretledim, en az hatalı modeli (1.) doğru belirttim"],[10,"En az hatalı modelin 1. olduğunu belirttim ama hataları belirtmedim"],[10,"Hataları belirttim ama en az hatalı modeli belirtmedim"],[0,"Cevap yok veya yanlış"]]));
+ c2.appendChild(selfMark(c2,"y21"));p.appendChild(c2);
+
+ // Soru 2.2
+ const c3=document.createElement("article");c3.className="card";
+ const OPTS=["Klorofil","H2O","CO2","1/2 O2","Glikoz","NADP+","NADPH","ATP","ADP+Pi"];
+ const NAMES={P:"Işığı soğuran pigment",W:"Elektron kaynağı (fotoliz)",O:"Fotolizin yan ürünü",C:"Calvin'e giren gaz",G:"Calvin'in ürünü",N1:"Elektronları tutan taşıyıcı (boş)",N2:"Elektron tutmuş taşıyıcı",R1:"Calvin'de harcanan enerji molekülü",R2:"Harcanınca oluşan",R3:"Calvin'e H taşıyan molekül",R4:"H'lerini bırakınca oluşan"};
+ c3.innerHTML='<div class="qhead"><span class="qnum">Soru 2.2</span><span class="tag">20 puan</span></div><p class="q">Fotosentez reaksiyonlarını bilimsel modele uygun şekilde modelleyiniz. Her kutuya doğru maddeyi seç; şema canlı güncellenir.</p><div class="svgbox" id="bsvg"></div><div class="grid2" id="bsel"></div><div class="btns"><button class="act primary" type="button" id="bchk">Modelimi kontrol et</button><button class="act" type="button" id="bshow">Doğru modeli göster</button></div><p class="fb" id="bfb"></p>';
+ const bv={};Object.keys(POS).forEach(k=>bv[k]="?");
+ const bsvg=c3.querySelector("#bsvg"),bsel=c3.querySelector("#bsel");
+ const drawB=(mark)=>{bsvg.innerHTML=modelSVG(Object.fromEntries(Object.keys(POS).map(k=>[k,bv[k]])));if(mark)bsvg.querySelectorAll(".slot").forEach(g=>g.classList.add(bv[g.dataset.k]===CORRECT[g.dataset.k]?"good":"hit"))};
+ Object.keys(POS).forEach(k=>{const l=document.createElement("label");l.innerHTML=NAMES[k]+'<select id="b-'+k+'"><option value="?">Seç…</option>'+OPTS.map(o=>'<option value="'+o+'">'+lab(o)+'</option>').join("")+'</select>';
+   const s=l.querySelector("select");s.onchange=()=>{bv[k]=s.value;s.className="";drawB(false)};bsel.appendChild(l)});
+ drawB(false);
+ c3.querySelector("#bchk").onclick=()=>{let ok=0;Object.keys(POS).forEach(k=>{const s=c3.querySelector("#b-"+k),g=bv[k]===CORRECT[k];s.className=g?"good":"bad";if(g)ok++});drawB(true);
+   const f=c3.querySelector("#bfb");f.className="fb "+(ok===11?"ok":"no");f.textContent=ok===11?"Model hatasız. Tam puan.":ok+" / 11 kutu doğru. Kırmızı olanları düzelt."};
+ c3.querySelector("#bshow").onclick=()=>{Object.keys(POS).forEach(k=>{bv[k]=CORRECT[k];const s=c3.querySelector("#b-"+k);s.value=CORRECT[k];s.className="good"});drawB(true);const f=c3.querySelector("#bfb");f.className="fb ok";f.textContent="Doğru model: Işık klorofili uyarır, su fotolizle ½ O₂ verir; elektronlar ETS'den ATP ve NADPH üretir; Calvin döngüsü CO₂'yi ATP ve NADPH ile glikoza çevirir."};
+ c3.appendChild(rubric("y22",[[20,"Fotosentezi hatasız modelledim"],[10,"Eksik veya kısmen hatalı modelledim"],[0,"Cevap yok veya yanlış"]]));
+ c3.appendChild(selfMark(c3,"y22"));p.appendChild(c3);
+
+ // Soru 3
+ const c4=document.createElement("article");c4.className="card";
+ const DATA={dark:0,20:30,15:54,10:120};
+ c4.innerHTML='<div class="qhead"><span class="qnum">Soru 3</span><span class="tag">10 + 10 puan</span></div><p class="ctx">1779 yılında Jan Ingenhousz, su bitkilerinin ışık varlığında hava baloncukları çıkardığını, karanlıkta ise bu olayın gerçekleşmediğini gözlemlemiştir. Baloncukların oksijen içerdiğini ve bitkilerin karanlıkta karbondioksit salınımı yaptığını belirlemiş, fotosentez için ışığın gerekli olduğunu ortaya koymuştur. Bu bulgulardan yararlanılarak su dolu kaba yerleştirilen Elodea bitkisinin üzerine cam huni ve test tüpü kapatılıp karanlık ortamda 10 dakika bekletildiğinde gaz kabarcığı oluşmadığı gözlenmiştir. Daha sonra sıcaklığın sabit tutulduğu üç ayrı düzenekte (K, L, M) mor ışık kaynağı bitkiden farklı uzaklıklara yerleştirilmiş, bitkinin ışık şiddetine uyum sağlaması için beklenmiş ve 2 dakika boyunca oluşan gaz kabarcıkları sayılmıştır. Düzeneği sen çalıştır.</p>'+
+ '<div class="lab"><div class="tank" id="tank"><div class="lamp" id="lamp"></div><div class="tube"></div><span class="plant">Elodea</span></div><div style="display:grid;gap:10px"><div class="btns" id="dist"><button class="chip" type="button" data-d="dark">Karanlık</button><button class="chip" type="button" data-d="20">K · 20 cm</button><button class="chip" type="button" data-d="15">L · 15 cm</button><button class="chip" type="button" data-d="10">M · 10 cm</button></div><div><span class="tag">2 dakikada kabarcık</span><div class="counter" id="cnt">0</div></div>'+
+ '<div class="tblwrap"><table><tr><th>Uzaklık</th><th>Kabarcık (2 dk)</th></tr><tr><td class="num">10 cm</td><td class="num" id="v10">—</td></tr><tr><td class="num">15 cm</td><td class="num" id="v15">—</td></tr><tr><td class="num">20 cm</td><td class="num" id="v20">—</td></tr><tr><td class="num">Karanlık</td><td class="num" id="vdark">—</td></tr></table></div></div></div>'+
+ '<p class="q">3.1 K, L ve M düzeneklerinde yapılan deneyin amacını, bağımlı ve bağımsız değişkenlerini yazınız.</p><div class="grid2"><label>Deneyin amacı<input type="text" id="y3a"></label><label>Bağımlı değişken<input type="text" id="y3b"></label><label>Bağımsız değişken<input type="text" id="y3c"></label></div><div class="btns"><button class="act primary" type="button">3.1 cevabı</button></div><div class="ans" hidden><b>Amaç:</b> Işık şiddetinin fotosentez hızına etkisini araştırmak. (4 P)<br><b>Bağımlı değişken:</b> Bitkinin belirtilen sürede oluşturduğu gaz kabarcığı sayısı. (3 P)<br><b>Bağımsız değişken:</b> Işık kaynağının bitkiye olan uzaklığı (ışık şiddeti). (3 P)<br><b>Kontrol (sabit) değişkenler:</b> sıcaklık, bitki türü, su, ışık rengi, süre.</div>'+
+ '<p class="q">3.2 Karanlık ortamda test tüpünde gaz kabarcığı oluşmazken mor ışık kaynağı kullanıldığında gaz kabarcıkları görülmesinin nedenini açıklayınız.</p><textarea id="y32" placeholder="Cevabın…"></textarea><div class="btns"><button class="act primary" type="button">3.2 cevabı</button></div><div class="ans" hidden>Ingenhousz fotosentez için ışığın gerekli olduğunu ve kabarcıkların oksijen içerdiğini gösterdi. Elodea karanlıkta fotosentez yapamadığı için suyun fotolizi olmaz, O₂ kabarcığı oluşmaz. Mor ışık klorofilin en iyi soğurduğu ışıklardan biridir; fotosentez hızı yüksektir ve fotolizle açığa çıkan O₂ kabarcık olarak görülür.</div>';
+ const lamp=c4.querySelector("#lamp"),tank=c4.querySelector("#tank"),cnt=c4.querySelector("#cnt");let timer=null,bt=null;
+ c4.querySelector("#dist").addEventListener("click",e=>{const d=e.target.dataset.d;if(!d)return;
+   c4.querySelectorAll("#dist .chip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===d));
+   clearInterval(timer);clearInterval(bt);
+   tank.classList.toggle("dark",d==="dark");lamp.hidden=d==="dark";lamp.style.top={20:"8px",15:"28px",10:"48px"}[d]||"8px";
+   const target=DATA[d];let n=0;cnt.textContent="0";
+   if(target){const step=Math.max(1,Math.ceil(target/40));timer=setInterval(()=>{n=Math.min(target,n+step);cnt.textContent=n;if(n>=target){clearInterval(timer);clearInterval(bt)}},50);
+     bt=setInterval(()=>{const b=document.createElement("span");b.className="bub";b.style.left=(50+(Math.random()*16-8))+"%";tank.appendChild(b);setTimeout(()=>b.remove(),1900)},Math.max(60,2400/target*3))}
+   c4.querySelector("#v"+d).textContent=target;
+ });
+ c4.querySelectorAll(".act.primary").forEach(b=>{const a=b.parentElement.nextElementSibling;b.onclick=()=>a.hidden=!a.hidden});
+ const r31=document.createElement("p");r31.className="q";r31.textContent="3.1 puanlama (10 P): amaç 4 P, bağımlı değişken 3 P, bağımsız değişken 3 P";c4.appendChild(r31);
+ c4.appendChild(rubric("y31",[[10,"Amaç, bağımlı ve bağımsız değişkenin üçü de doğru"],[7,"Amaç ve bir değişken doğru (4 + 3)"],[6,"İki değişken doğru, amaç eksik (3 + 3)"],[4,"Yalnızca amaç doğru"],[3,"Yalnızca bir değişken doğru"],[0,"Cevap yok veya yanlış"]]));
+ const r32=document.createElement("p");r32.className="q";r32.textContent="3.2 puanlama (10 P)";c4.appendChild(r32);
+ c4.appendChild(rubric("y32",[[10,"Karanlıkta kabarcık oluşmamasını ve mor ışıkta oluşmasını tam ve doğru açıkladım"],[5,"Eksik veya kısmen hatalı açıkladım"],[0,"Cevap yok veya yanlış"]]));
+ c4.appendChild(selfMark(c4,"y3"));p.appendChild(c4);
+
+ // Soru 4
+ const c5=document.createElement("article");c5.className="card";
+ const ROWS=[["Enerji kaynağı","Işık enerjisi kullanılır.","İnorganik maddelerin oksidasyonu sonucu açığa çıkan kimyasal enerjidir."],["Işık soğurma yeteneği","Klorofil ile soğurma gerçekleştirilir.","Klorofil pigmenti bulundurmadıkları için ışık enerjisi soğurulmaz."],["Gerçekleştirebilen canlı türleri","Yeşil bitkiler, algler, bazı bakteriler ve bazı protistlerde görülür.","Kemosentetik bakteriler ve arkelerde görülür."],["Işık gereksinimi","Sadece ışığın varlığında gerçekleşir.","Işık varlığında ve yokluğunda gerçekleşebilir."]];
+ c5.innerHTML='<div class="qhead"><span class="qnum">Soru 4</span><span class="tag">20 puan</span></div><p class="ctx">"Yaşam, Güneş olmadan da var olabilir mi?" projesinde öğrenciler güneş ışığı ulaşmayan okyanus tabanındaki canlıların nasıl besin ürettiğini araştırıyor.</p><p class="q">Tabloda kemosentezle ilgili boş bırakılan yerleri doldurunuz.</p><div class="tblwrap"><table><tr><th>Özellik</th><th>Fotosentez</th><th>Kemosentez</th></tr>'+ROWS.map((r,i)=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><textarea id="k'+i+'" style="min-height:56px" placeholder="Yaz…"></textarea><p class="ans" hidden style="margin-top:6px">'+r[2]+' (5 P)</p></td></tr>').join("")+'</table></div><div class="btns"><button class="act primary" type="button">Anahtarla karşılaştır</button></div>';
+ c5.querySelector(".act.primary").onclick=()=>c5.querySelectorAll(".ans").forEach(a=>a.hidden=!a.hidden);
+ c5.appendChild(rubric("y4",[[20,"Dört satırın hepsi doğru"],[15,"Üç satır doğru"],[10,"İki satır doğru"],[5,"Bir satır doğru"],[0,"Cevap yok veya yanlış"]]));
+ c5.appendChild(selfMark(c5,"y4"));p.appendChild(c5);
+})();
+
+// ---------- Bölünme panel
+(function(){
+ const p=document.getElementById("p-bolunme");
+ p.innerHTML='<div class="intro"><h2>Hücre Bölünmesi · OGM Materyal föyleri</h2><p>Beş föyün konu özeti ve tüm soruları. Çoktan seçmelilerde seçeneğe tıkla, açık uçlularda cevabı aç.</p></div>';
+ OGM.forEach(t=>{
+   const h=document.createElement("div");h.className="intro";h.innerHTML='<h2>'+t.topic+'</h2><p>'+t.intro+'</p>';p.appendChild(h);
+   t.qs.forEach((q,qi)=>{
+     const c=document.createElement("article");c.className="card";
+     c.innerHTML='<div class="qhead"><span class="qnum">Soru '+(qi+1)+'</span><span class="tag">'+t.topic+'</span></div><p class="q">'+q.q+'</p>';
+     if(q.type==="mc"){
+       const o=document.createElement("div");o.className="opts";const fb=document.createElement("p");fb.className="fb";
+       q.o.forEach((txt,i)=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=String.fromCharCode(65+i)+") "+txt;
+         b.onclick=()=>{o.querySelectorAll(".opt").forEach((x,j)=>x.className="opt"+(j===q.a?" right":""));if(i!==q.a)b.classList.add("wrong");fb.className="fb "+(i===q.a?"ok":"no");fb.textContent=(i===q.a?"Doğru. ":"Doğru cevap "+String.fromCharCode(65+q.a)+". ")+q.e;
+           if(i===q.a&&!st[q.id]){st[q.id]="known";save();c.classList.add("known");updateProgress()}};o.appendChild(b)});
+       c.append(o,fb);
+     }else if(q.type==="open"){
+       c.insertAdjacentHTML("beforeend",'<textarea id="t-'+q.id+'" placeholder="Cevabın…"></textarea><div class="btns"><button class="act primary" type="button">Cevabı göster</button></div><p class="ans" hidden>'+q.c+'</p>');
+       const a=c.querySelector(".ans");c.querySelector(".act.primary").onclick=()=>a.hidden=!a.hidden;
+     }else{
+       const m=document.createElement("div");m.className="match";
+       q.left.forEach((l,i)=>{const r=document.createElement("div");r.className="row";r.innerHTML='<span>'+l+'</span><select id="m-'+i+'"><option value="">Seç…</option>'+q.right.map((x,j)=>'<option value="'+j+'">'+x+'</option>').join("")+'</select>';m.appendChild(r)});
+       const fb=document.createElement("p");fb.className="fb";
+       const btn=document.createElement("div");btn.className="btns";btn.innerHTML='<button class="act primary" type="button">Kontrol et</button>';
+       btn.firstChild.onclick=()=>{let ok=0;q.left.forEach((_,i)=>{const s=m.querySelector("#m-"+i),g=+s.value===q.ans[i]&&s.value!=="";s.className=g?"good":"bad";if(g)ok++});fb.className="fb "+(ok===5?"ok":"no");fb.textContent=ok===5?"Hepsi doğru!":ok+" / 5 doğru. Anahtar: "+q.e};
+       c.append(m,btn,fb);
+     }
+     c.appendChild(selfMark(c,q.id));p.appendChild(c);
+   });
+ });
+})();
+
+document.getElementById("reset").onclick=()=>{st={};save();document.querySelectorAll(".card").forEach(c=>c.classList.remove("known","again"));updateProgress()};
+let startTab="atp";try{startTab=localStorage.getItem(KEY+"-tab")||"atp"}catch(e){}
+show(SECTIONS.some(s=>s.id===startTab)?startTab:"atp");updateProgress();
+</script>
+
+</body>
+</html>
